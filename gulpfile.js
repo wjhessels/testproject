@@ -1,6 +1,7 @@
 const gulp = require('gulp');
 const sass = require('gulp-sass');
 const imagemin = require('gulp-imagemin');
+const uglifycss = require('gulp-uglifycss');
 const browserSync = require('browser-sync').create();
 
 // compile scss into css
@@ -16,6 +17,14 @@ function style() {
 
 }
 
+function uglifyme() {
+	return gulp.src('./css/**/*.css')
+	    .pipe(uglifycss({
+	      "uglyComments": true
+	    }))
+	    .pipe(gulp.dest('./dist/'));
+}
+
 function miniimage() {
 	return gulp.src('./images/*')
         .pipe(imagemin())
@@ -29,10 +38,12 @@ function watch() {
 		}
 	});
 	gulp.watch('./scss/**/*.scss', style);
+	gulp.watch('./css/*', uglifyme);
 	gulp.watch('./images/*', miniimage);
 	gulp.watch('./*.html').on('change', browserSync.reload);
 	gulp.watch('./js/**/*.js').on('change', browserSync.reload);
 }
 
+exports.miniimage = miniimage;
 exports.style = style;
 exports.watch = watch; 
